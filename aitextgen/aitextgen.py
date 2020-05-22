@@ -11,7 +11,6 @@ from transformers.modeling_utils import Conv1D
 from torch.nn import Linear, Embedding
 import torch
 import os
-import re
 import logging
 import sys
 from tqdm.auto import trange
@@ -295,9 +294,7 @@ class aitextgen:
             if prompt is not None:
                 # Bold the prompt if printing to console
                 gen_texts = [
-                    re.sub(
-                        r"^" + prompt_text, "\033[1m" + prompt_text + "\033[0m", text,
-                    )
+                    text.replace(prompt_text, f"\033[1m{prompt_text}\033[0m", 1)
                     for text in gen_texts
                 ]
 
@@ -642,7 +639,7 @@ class aitextgen:
     def quantize(self):
         """
         Quantizes the model, which gives it a generation performance boost.
-        Should only be used to generate on a supported GPU.
+        Should only be used to generate on a supported CPU.
 
         Currently only the lm_head layer is quantized:
         https://github.com/pytorch/pytorch/issues/34074
